@@ -124,6 +124,26 @@ BEGIN
     v_end_time := clock_timestamp();
     RAISE NOTICE '>> Load completed in % seconds', ROUND(EXTRACT(EPOCH FROM (v_end_time - v_start_time))::numeric, 2);
 
+-- Table: erp_loc_a101
+    v_start_time := clock_timestamp();
+    RAISE NOTICE '>> Truncating and loading: silver.erp_loc_a101';
+
+    TRUNCATE TABLE silver.erp_loc_a101;
+
+	INSERT INTO silver.erp_loc_a101 (cid,cntry)
+	SELECT REPLACE(cid,'-','') AS cid,
+		CASE
+			WHEN TRIM(cntry)='' OR cntry IS NULL THEN 'n/a'
+			WHEN TRIM(cntry) IN ('United States','USA','US') THEN 'USA'
+			WHEN TRIM(cntry) = 'DE' THEN 'Germany'
+			ELSE TRIM(cntry)
+		END AS cntry
+	FROM bronze.erp_loc_a101;
+
+
+    v_end_time := clock_timestamp();
+    RAISE NOTICE '>> Load completed in % seconds', ROUND(EXTRACT(EPOCH FROM (v_end_time - v_start_time))::numeric, 2);
+
     -- Final Summary
     v_batch_end_time := clock_timestamp();
     RAISE NOTICE '==================================================';
