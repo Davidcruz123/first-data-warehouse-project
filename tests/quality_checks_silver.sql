@@ -118,3 +118,15 @@ SELECT gen
 FROM silver.erp_cust_az12
 WHERE gen NOT IN ('Male','Female','n/a');
 
+-- ====================================================================
+-- Checking 'silver.erp_loc_a101'
+-- ====================================================================
+
+-- Verify id was formatted properly
+SELECT COUNT(*)
+FROM silver.erp_loc_a101
+WHERE cid LIKE '%-%';
+
+-- Data standarization and consistency
+SELECT DISTINCT cntry
+FROM silver.erp_loc_a101;
