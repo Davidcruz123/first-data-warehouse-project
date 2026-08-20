@@ -102,3 +102,19 @@ WHERE sls_sales != sls_quantity * sls_price
    OR sls_quantity <= 0 
    OR sls_price <= 0
 ORDER BY sls_sales, sls_quantity, sls_price;
+
+-- ====================================================================
+-- Checking 'silver.erp_cust_az12'
+-- ====================================================================
+
+-- Identify out of range dates
+-- Expectation: No results, Everybody must be older than 18 taking as reference year 2026
+SELECT COUNT(*)
+FROM silver.erp_cust_az12
+WHERE bdate> '2007-01-01';
+
+-- Data standarization and consistency
+SELECT gen
+FROM silver.erp_cust_az12
+WHERE gen NOT IN ('Male','Female','n/a');
+
