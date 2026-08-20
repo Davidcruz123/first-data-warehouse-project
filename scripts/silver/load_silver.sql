@@ -14,7 +14,7 @@ Parameters:
 	  This stored procedure does not accept any parameters or return any values.
 
 Usage Example:
-    EXEC Silver.load_silver;
+    Call Silver.load_silver;
 ===============================================================================
 */
 
@@ -140,6 +140,19 @@ BEGIN
 		END AS cntry
 	FROM bronze.erp_loc_a101;
 
+
+    v_end_time := clock_timestamp();
+    RAISE NOTICE '>> Load completed in % seconds', ROUND(EXTRACT(EPOCH FROM (v_end_time - v_start_time))::numeric, 2);
+
+-- Table: erp_px_cat_g1v2
+    v_start_time := clock_timestamp();
+    RAISE NOTICE '>> Truncating and loading: silver.erp_px_cat_g1v2';
+
+    TRUNCATE TABLE silver.erp_px_cat_g1v2;
+
+	INSERT INTO silver.erp_px_cat_g1v2 (id,cat,subcat,maintenance)
+	SELECT id,cat,subcat,maintenance
+	FROM bronze.erp_px_cat_g1v2;
 
     v_end_time := clock_timestamp();
     RAISE NOTICE '>> Load completed in % seconds', ROUND(EXTRACT(EPOCH FROM (v_end_time - v_start_time))::numeric, 2);
