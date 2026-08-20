@@ -97,6 +97,33 @@ BEGIN
     v_end_time := clock_timestamp();
     RAISE NOTICE '>> Load completed in % seconds', ROUND(EXTRACT(EPOCH FROM (v_end_time - v_start_time))::numeric, 2);
 
+-- Table: erp_cust_az12
+    v_start_time := clock_timestamp();
+    RAISE NOTICE '>> Truncating and loading: silver.erp_cust_az12';
+
+    TRUNCATE TABLE silver.erp_cust_az12;
+
+	INSERT INTO silver.erp_cust_az12 (cid,bdate,gen)
+	SELECT  
+		CASE
+			WHEN LEFT(UPPER(cid),3)='NAS' THEN SUBSTRING(cid,4)
+			ELSE cid
+			END AS cid,
+		CASE 
+			WHEN bdate > '2007-01-01' THEN NULL
+			ELSE bdate
+		END AS bdate,
+		CASE
+			WHEN TRIM(gen) IN ('M','Male') THEN 'Male'
+			WHEN TRIM(gen) IN ('F','Female') THEN 'Female'
+			ELSE 'n/a' 
+		END AS gen
+	FROM bronze.erp_cust_az12;
+
+
+    v_end_time := clock_timestamp();
+    RAISE NOTICE '>> Load completed in % seconds', ROUND(EXTRACT(EPOCH FROM (v_end_time - v_start_time))::numeric, 2);
+
     -- Final Summary
     v_batch_end_time := clock_timestamp();
     RAISE NOTICE '==================================================';
